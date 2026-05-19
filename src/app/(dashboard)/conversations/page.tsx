@@ -179,7 +179,7 @@ export default function ConversationsPage() {
                 "status",
                 next.status === "open"
                   ? null
-                  : next.status
+                  : next.status || null
               );
             }
 
