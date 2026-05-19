@@ -50,8 +50,7 @@ export function LatestActivityCard({
   const invalidate = useCallback(() => {
     queryClient.invalidateQueries({ queryKey });
   }, [queryClient, queryKey]);
-  usePusherChannel(pusherChannel ?? null, "message:new", invalidate);
-  usePusherChannel(pusherChannel ?? null, "conversation:updated", invalidate);
+
 
   const items = data?.items ?? [];
 
