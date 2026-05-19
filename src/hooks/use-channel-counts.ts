@@ -56,8 +56,7 @@ export function useChannelCounts(locationId: string | "all", pusherChannel: stri
     queryClient.invalidateQueries({ queryKey });
   }, [queryClient, queryKey]);
 
-  usePusherChannel(pusherChannel, "message:new", invalidate);
-  usePusherChannel(pusherChannel, "conversation:updated", invalidate);
+
 
   return {
     counts: query.data ?? EMPTY,
