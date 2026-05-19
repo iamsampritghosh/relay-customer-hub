@@ -256,16 +256,6 @@ export async function GET() {
                       ? "outbound"
                       : "inbound",
 
-                  messageType:
-                    (msg as any)
-                      .messageType ||
-                    "text",
-
-                  status:
-                    (msg as any)
-                      .status ||
-                    "delivered",
-
                   createdAt:
                     (msg as any)
                       .dateAdded
