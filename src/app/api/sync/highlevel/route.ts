@@ -26,7 +26,7 @@ export async function GET() {
         );
 
       const conversations =
-        result.conversations || [];
+        (result as any).conversations || [];
 
       console.log(
         "found:",
@@ -35,7 +35,7 @@ export async function GET() {
 
       for (const convo of conversations) {
         try {
-          if (!convo.contactId)
+          if (!(convo as any).contactId)
             continue;
 
           // =========================
@@ -48,7 +48,7 @@ export async function GET() {
                 where: eq(
                   schema.contacts
                     .ghlContactId,
-                  convo.contactId
+                  (convo as any).contactId
                 ),
               }
             );
@@ -62,23 +62,31 @@ export async function GET() {
                     location.id,
 
                   ghlContactId:
-                    convo.contactId,
+                    (convo as any)
+                      .contactId,
 
                   name:
-                    convo.fullName ||
-                    convo.contactName ||
+                    (convo as any)
+                      .fullName ||
+                    (convo as any)
+                      .contactName ||
                     "Unknown",
 
                   phone:
-                    convo.phone || null,
+                    (convo as any)
+                      .phone || null,
 
                   email:
-                    convo.email || null,
+                    (convo as any)
+                      .email || null,
                 })
                 .returning();
 
             contact = inserted[0];
           }
+
+          if (!contact)
+            continue;
 
           // =========================
           // CHANNEL MAPPING
@@ -134,7 +142,7 @@ export async function GET() {
                   location.id,
 
                 ghlConversationId:
-                  convo.id,
+                  (convo as any).id,
 
                 contactId:
                   contact.id,
@@ -143,20 +151,24 @@ export async function GET() {
                   mappedChannel,
 
                 status:
-                  convo.status ||
+                  (convo as any)
+                    .status ||
                   "open",
 
                 priority:
                   "normal",
 
                 unreadCount:
-                  convo.unreadCount ||
+                  (convo as any)
+                    .unreadCount ||
                   0,
 
                 lastMessageAt:
-                  convo.lastMessageDate
+                  (convo as any)
+                    .lastMessageDate
                     ? new Date(
-                        convo.lastMessageDate
+                        (convo as any)
+                          .lastMessageDate
                       )
                     : new Date(),
               })
@@ -167,16 +179,21 @@ export async function GET() {
             insertedConversation[0];
 
           if (!localConversation) {
-            localConversation =
+            const foundConversation =
               await db.query.conversations.findFirst(
                 {
                   where: eq(
                     schema.conversations
                       .ghlConversationId,
-                    convo.id
+                    (convo as any).id
                   ),
                 }
               );
+
+            if (foundConversation) {
+              localConversation =
+                foundConversation;
+            }
           }
 
           if (!localConversation)
@@ -184,35 +201,34 @@ export async function GET() {
 
           // =========================
           // FETCH MESSAGES
-          // IMPORTANT FIX:
-          // USE LOCATION ID
-          // NOT CONVERSATION ID
           // =========================
 
           try {
             const messagesResult =
               await ghlClient.conversations.getMessages(
                 location.ghlLocationId,
-                convo.id,
+                (convo as any).id,
                 {
                   limit: 15,
                 }
               );
 
-            const messages =
-              messagesResult.messages ||
-              messagesResult.conversationMessages ||
+            const messages: any[] =
+              (messagesResult as any)
+                .messages ||
+              (messagesResult as any)
+                .conversationMessages ||
               [];
 
             console.log(
               "conversation:",
-              convo.id,
+              (convo as any).id,
               "messages:",
               messages.length
             );
 
             for (const msg of messages) {
-              if (!msg.id)
+              if (!(msg as any).id)
                 continue;
 
               await db
@@ -224,36 +240,44 @@ export async function GET() {
                     localConversation.id,
 
                   ghlMessageId:
-                    msg.id,
+                    (msg as any).id,
 
                   body:
-                    msg.body ||
-                    msg.message ||
-                    msg.text ||
+                    (msg as any).body ||
+                    (msg as any)
+                      .message ||
+                    (msg as any).text ||
                     "",
 
                   direction:
-                    msg.direction ===
+                    (msg as any)
+                      .direction ===
                     "outbound"
                       ? "outbound"
                       : "inbound",
 
                   messageType:
-                    msg.messageType ||
+                    (msg as any)
+                      .messageType ||
                     "text",
 
                   status:
-                    msg.status ||
+                    (msg as any)
+                      .status ||
                     "delivered",
 
                   createdAt:
-                    msg.dateAdded
+                    (msg as any)
+                      .dateAdded
                       ? new Date(
-                          msg.dateAdded
+                          (msg as any)
+                            .dateAdded
                         )
-                      : msg.createdAt
+                      : (msg as any)
+                          .createdAt
                       ? new Date(
-                          msg.createdAt
+                          (msg as any)
+                            .createdAt
                         )
                       : new Date(),
                 })
@@ -262,14 +286,14 @@ export async function GET() {
           } catch (err) {
             console.error(
               "message sync failed",
-              convo.id,
+              (convo as any).id,
               err
             );
           }
         } catch (err) {
           console.error(
             "conversation failed:",
-            convo.id,
+            (convo as any).id,
             err
           );
         }
