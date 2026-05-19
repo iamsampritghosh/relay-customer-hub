@@ -3,7 +3,7 @@
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo } from "react";
 
-import { usePusherChannel } from "@/hooks/use-pusher-channel";
+
 
 export type ThreadMessage = {
   id: string;
@@ -75,11 +75,7 @@ export function useMessages(conversationId: string | null) {
     [conversationId, queryClient, queryKey],
   );
 
-  usePusherChannel(
-    conversationId ? `private-conversation-${conversationId}` : null,
-    "message:new",
-    onNewMessage,
-  );
+  
 
   // Mark as read on mount + whenever the conversation changes.
   useEffect(() => {
