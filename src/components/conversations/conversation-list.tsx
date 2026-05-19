@@ -14,16 +14,32 @@ type Conversation = {
   } | null;
 };
 
+type Filters = {
+  locationId?: string;
+  channel?: string;
+  status?: string;
+  search?: string;
+};
+
+type Props = {
+  filters: Filters;
+
+  onFiltersChange?: (
+    next: Filters
+  ) => void;
+
+  activeId?: string | null;
+
+  onPick?: (
+    id: string
+  ) => void;
+
+  pusherChannel?: string | null;
+};
+
 export function ConversationList({
   filters,
-}: {
-  filters: {
-    locationId?: string;
-    channel?: string;
-    status?: string;
-    search?: string;
-  };
-}) {
+}: Props) {
   const [conversations, setConversations] =
     useState<Conversation[]>([]);
 
