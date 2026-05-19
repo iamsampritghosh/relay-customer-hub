@@ -112,8 +112,7 @@ export function useConversations(
     [queryClient, queryKey],
   );
 
-  usePusherChannel(pusherChannel, "message:new", handleMessageNew);
-  usePusherChannel(pusherChannel, "conversation:updated", handleConvoUpdated);
+
 
   const items = useMemo(
     () => query.data?.pages.flatMap((p) => p.items) ?? [],
