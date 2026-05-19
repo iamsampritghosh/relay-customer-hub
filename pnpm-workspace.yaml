@@ -1,6 +1,9 @@
-allowBuilds:
-  '@clerk/shared': true
-  esbuild: true
-  msw: true
-  sharp: true
-  unrs-resolver: true
+packages:
+  - '.'
+
+onlyBuiltDependencies:
+  - '@clerk/shared'
+  - esbuild
+  - msw
+  - sharp
+  - unrs-resolver

@@ -42,7 +42,7 @@ export async function GET() {
   const cookieStore = await cookies();
   cookieStore.set(STATE_COOKIE, state, {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 10, // 10 minutes — generous for slow OAuth click-through

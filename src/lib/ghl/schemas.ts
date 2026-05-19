@@ -33,10 +33,18 @@ export const conversationSchema = z
     id: z.string(),
     contactId: z.string(),
     locationId: z.string(),
-    type: channelEnum.optional(),
+
+    // FIXED
+    type: z.string().optional().nullable(),
+
     lastMessageBody: z.string().nullish(),
     lastMessageType: z.string().nullish(),
-    lastMessageDate: z.string().nullish(),
+
+    // FIXED
+    lastMessageDate: z
+      .union([z.string(), z.number()])
+      .nullish(),
+
     unreadCount: z.number().int().nonnegative().optional(),
     assignedTo: z.string().nullish(),
     status: z.string().optional(),
@@ -55,7 +63,9 @@ export const conversationSearchResponse = z
     nextStartAfterDate: z.union([z.string(), z.number()]).nullish(),
   })
   .passthrough();
-export type ConversationSearchResponse = z.infer<typeof conversationSearchResponse>;
+export type ConversationSearchResponse = z.infer<
+  typeof conversationSearchResponse
+>;
 
 export const messageSchema = z
   .object({
@@ -129,7 +139,9 @@ export const contactUpsertResponse = z
     new: z.boolean().optional(),
   })
   .passthrough();
-export type ContactUpsertResponse = z.infer<typeof contactUpsertResponse>;
+export type ContactUpsertResponse = z.infer<
+  typeof contactUpsertResponse
+>;
 
 export const locationSchema = z
   .object({
